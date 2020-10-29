@@ -46,6 +46,7 @@ const (
 	dataKeyAir
 	dataKeyPotionColour
 	dataKeyPotionAmbient
+	dataKeyScale             = 38
 	dataKeyBoundingBoxWidth  = 53
 	dataKeyBoundingBoxHeight = 54
 )

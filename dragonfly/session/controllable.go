@@ -49,6 +49,10 @@ type Controllable interface {
 	StartSwimming()
 	Swimming() bool
 	StopSwimming()
+	Flying() bool
+	CanFly() bool
+	SetCanFly(bool)
+	SetFlying(bool)
 
 	StartBreaking(pos world.BlockPos, face world.Face)
 	ContinueBreaking(face world.Face)
@@ -69,4 +73,5 @@ type Controllable interface {
 	// Skin returns the skin of the controllable. Each controllable must have a skin, as it defines how the
 	// entity looks in the world.
 	Skin() skin.Skin
+	SetSkin(skin.Skin)
 }

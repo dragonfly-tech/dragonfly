@@ -50,6 +50,12 @@ type UsingItem struct{}
 // OnFire makes an entity show itself as on fire.
 type OnFire struct{}
 
+// Scale sets the scale of the player's geometry.
+type Scale struct {
+	// Scale is the scale of the player's geometry.
+	Scale float64
+}
+
 func (Sneaking) __()      {}
 func (Swimming) __()      {}
 func (Breathing) __()     {}
@@ -60,3 +66,4 @@ func (Named) __()         {}
 func (EffectBearing) __() {}
 func (UsingItem) __()     {}
 func (OnFire) __()        {}
+func (Scale) __()         {}

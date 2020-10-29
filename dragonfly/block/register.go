@@ -114,6 +114,7 @@ func init() {
 	world.RegisterBlock(InvisibleBedrock{})
 	world.RegisterBlock(NoteBlock{})
 	world.RegisterBlock(DragonEgg{})
+	world.RegisterBlock(allSandstone()...)
 }
 
 func init() {
@@ -312,6 +313,14 @@ func init() {
 	world.RegisterItem("minecraft:invisibleBedrock", InvisibleBedrock{})
 	world.RegisterItem("minecraft:noteblock", NoteBlock{})
 	world.RegisterItem("minecraft:dragon_egg", DragonEgg{})
+	world.RegisterItem("minecraft_sandstone", Sandstone{Red: false, Data: 0})
+	world.RegisterItem("minecraft_sandstone", Sandstone{Red: false, Data: 1})
+	world.RegisterItem("minecraft_sandstone", Sandstone{Red: false, Data: 2})
+	world.RegisterItem("minecraft_sandstone", Sandstone{Red: false, Data: 3})
+	world.RegisterItem("minecraft:red_sandstone", Sandstone{Red: true, Data: 0})
+	world.RegisterItem("minecraft:red_sandstone", Sandstone{Red: true, Data: 1})
+	world.RegisterItem("minecraft:red_sandstone", Sandstone{Red: true, Data: 2})
+	world.RegisterItem("minecraft:red_sandstone", Sandstone{Red: true, Data: 3})
 }
 
 func init() {

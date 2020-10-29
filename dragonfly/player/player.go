@@ -77,6 +77,7 @@ type Player struct {
 	fireTicks atomic.Int64
 
 	speed    atomic.Float64
+	scale    atomic.Float64
 	health   *entity_internal.HealthManager
 	effects  *entity.EffectManager
 	immunity atomic.Value
@@ -113,6 +114,7 @@ func New(name string, skin skin.Skin, pos mgl64.Vec3) *Player {
 		speed:    *atomic.NewFloat64(0.1),
 		nameTag:  *atomic.NewString(name),
 		heldSlot: atomic.NewUint32(0),
+		scale:    *atomic.NewFloat64(1),
 	}
 	p.pos.Store(pos)
 	p.velocity.Store(mgl64.Vec3{})
@@ -158,11 +160,17 @@ func (p *Player) XUID() string {
 	return p.xuid
 }
 
-// Skin returns the skin that a player joined with. This skin will be visible to other players that the player
-// is shown to.
-// If the player was not connected to a network session, a default skin will be set.
+// Skin returns the current skin for a player.
 func (p *Player) Skin() skin.Skin {
 	return p.skin
+}
+
+// SetSkin updates a players skin.
+func (p *Player) SetSkin(new skin.Skin) {
+	p.skin = new
+	for _, viewer := range p.World().Viewers(p.Position()) {
+		viewer.ViewEntitySkin(p)
+	}
 }
 
 // Handle changes the current handler of the player. As a result, events called by the player will call
@@ -352,6 +360,17 @@ func (p *Player) SetSpeed(speed float64) {
 // speed of a player is 0.1.
 func (p *Player) Speed() float64 {
 	return p.speed.Load()
+}
+
+// SetScale sets the scale of the player's geometry.
+func (p *Player) SetScale(scale float64) {
+	p.scale.Store(scale)
+	p.updateState()
+}
+
+// Scale returns the current scale of the player.
+func (p *Player) Scale() float64 {
+	return p.scale.Load()
 }
 
 // Health returns the current health of the player. It will always be lower than Player.MaxHealth().
@@ -1691,6 +1710,26 @@ func (p *Player) PlaySound(sound world.Sound) {
 	p.session().ViewSound(p.Position().Add(mgl64.Vec3{0, p.EyeHeight()}), sound)
 }
 
+// CanFly returns whether the client can fly.
+func (p *Player) CanFly() bool {
+	return p.session().CanFly()
+}
+
+// SetCanFly sets whether or not the client can fly.
+func (p *Player) SetCanFly(canfly bool) {
+	p.session().SetCanFly(canfly)
+}
+
+// Flying returns whether the client is currently flying or not.
+func (p *Player) Flying() bool {
+	return p.session().Flying()
+}
+
+// SetFlying sets whether or not the client is currently flying.
+func (p *Player) SetFlying(flying bool) {
+	p.session().SetFlying(flying)
+}
+
 // State returns the current state of the player. Types from the `entity/state` package are returned
 // depending on what the player is currently doing.
 func (p *Player) State() (s []state.State) {
@@ -1718,6 +1757,7 @@ func (p *Player) State() (s []state.State) {
 	if p.OnFireDuration() > 0 {
 		s = append(s, state.OnFire{})
 	}
+	s = append(s, state.Scale{Scale: p.scale.Load()})
 	colour, ambient := effect.ResultingColour(p.Effects())
 	if (colour != color.RGBA{}) {
 		s = append(s, state.EffectBearing{ParticleColour: colour, Ambient: ambient})

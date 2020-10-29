@@ -1333,6 +1333,7 @@ func (w *World) chunkFromCache(pos ChunkPos) (*chunkData, bool) {
 // showEntity shows an entity to a viewer of the world. It makes sure everything of the entity, including the
 // items held, is shown.
 func showEntity(e Entity, viewer Viewer) {
+	viewer.ViewEntitySkin(e)
 	viewer.ViewEntity(e)
 	viewer.ViewEntityState(e, e.State())
 	viewer.ViewEntityItems(e)

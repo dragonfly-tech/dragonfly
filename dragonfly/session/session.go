@@ -59,6 +59,9 @@ type Session struct {
 	openedWindow, openedPos        atomic.Value
 	swingingArm                    atomic.Bool
 
+	// adventureFlags are the adventure flags for the session.
+	adventureFlags *atomic.Uint32
+
 	blobMu                sync.Mutex
 	blobs                 map[uint64][]byte
 	openChunkTransactions []map[uint64]struct{}
@@ -105,6 +108,7 @@ func New(conn *minecraft.Conn, maxChunkRadius int, log *logrus.Logger) *Session 
 		log:                    log,
 		currentEntityRuntimeID: *atomic.NewUint64(1),
 		heldSlot:               atomic.NewUint32(0),
+		adventureFlags:         atomic.NewUint32(0),
 	}
 	s.openedWindow.Store(inventory.New(1, nil))
 	s.openedPos.Store(world.BlockPos{})
@@ -285,6 +289,8 @@ func (s *Session) registerHandlers() {
 		packet.IDRespawn:               &RespawnHandler{},
 		packet.IDText:                  &TextHandler{},
 		packet.IDTickSync:              nil,
+		packet.IDAdventureSettings:     &AdventureSettingsHandler{},
+		packet.IDPlayerSkin:            &PlayerSkinHandler{},
 	}
 }
 

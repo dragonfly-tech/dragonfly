@@ -156,10 +156,6 @@ func (s *Session) ViewEntity(e world.Entity) {
 
 	switch v := e.(type) {
 	case Controllable:
-		s.writePacket(&packet.PlayerSkin{
-			UUID: v.UUID(),
-			Skin: skinToProtocol(v.Skin()),
-		})
 		s.writePacket(&packet.AddPlayer{
 			UUID:            v.UUID(),
 			Username:        v.Name(),
@@ -259,6 +255,17 @@ func (s *Session) ViewEntityVelocity(e world.Entity, velocity mgl64.Vec3) {
 		EntityRuntimeID: s.entityRuntimeID(e),
 		Velocity:        vec64To32(velocity),
 	})
+}
+
+// ViewEntitySkin ...
+func (s *Session) ViewEntitySkin(e world.Entity) {
+	switch player := e.(type) {
+	case Controllable:
+		s.writePacket(&packet.PlayerSkin{
+			UUID: player.UUID(),
+			Skin: skinToProtocol(player.Skin()),
+		})
+	}
 }
 
 // entityOffset returns the offset that entities have client-side.
@@ -589,6 +596,8 @@ func (s *Session) ViewEntityState(e world.Entity, states []state.State) {
 			}
 		case state.OnFire:
 			m.setFlag(dataKeyFlags, dataFlagOnFire)
+		case state.Scale:
+			m[dataKeyScale] = float32(st.Scale)
 		}
 	}
 	s.writePacket(&packet.SetActorData{
