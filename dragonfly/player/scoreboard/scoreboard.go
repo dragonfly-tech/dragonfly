@@ -5,19 +5,26 @@ import (
 	"strings"
 )
 
+const (
+	SortOrderAscending = iota
+	SortOrderDescending
+)
+
 // Scoreboard represents a scoreboard that may be sent to a player. The scoreboard is shown on the right side
 // of the player's screen.
 type Scoreboard struct {
 	name  string
 	lines []string
+	order int
 }
 
-// New returns a new scoreboard with the display name passed. Once returned, lines may be added to the
-// scoreboard to add text to it. The name is formatted according to the rules of fmt.Sprintln.
-// Changing the scoreboard after sending it to a player will not update the scoreboard of the player
-// automatically: Player.SendScoreboard() must be called again to update it.
-func New(name ...interface{}) *Scoreboard {
-	return &Scoreboard{name: format(name)}
+// New returns a new scoreboard with the order and display name passed. Once returned, lines may be added to
+// the scoreboard to add text to it. The name is formatted according to the rules of fmt.Sprintln. The
+// different order values can be found above.Changing the scoreboard after sending it to a player will not
+// update the scoreboard of the player automatically: Player.SendScoreboard() must be called again to update
+// it.
+func New(order int, name ...interface{}) *Scoreboard {
+	return &Scoreboard{name: format(name), order: order}
 }
 
 // Name returns the display name of the scoreboard, as passed during the construction of the scoreboard.
@@ -90,6 +97,11 @@ func (board *Scoreboard) Clear() *Scoreboard {
 // Scoreboard.Add().
 func (board *Scoreboard) Lines() []string {
 	return board.lines
+}
+
+// Order returns the order the scoreboard is in. The different order values can be found above.
+func (board *Scoreboard) Order() int {
+	return board.order
 }
 
 // pad pads the string passed for as much as needed to achieve the same length as the name of the scoreboard.

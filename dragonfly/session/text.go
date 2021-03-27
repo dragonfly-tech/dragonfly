@@ -48,7 +48,7 @@ func (s *Session) SendJukeboxPopup(message string) {
 }
 
 // SendScoreboard ...
-func (s *Session) SendScoreboard(displayName string) {
+func (s *Session) SendScoreboard(displayName string, order int) {
 	if s.scoreboardObj.Load() != "" {
 		s.RemoveScoreboard()
 	}
@@ -60,6 +60,7 @@ func (s *Session) SendScoreboard(displayName string) {
 		ObjectiveName: obj,
 		DisplayName:   displayName,
 		CriteriaName:  "dummy",
+		SortOrder:     int32(order),
 	})
 }
 
