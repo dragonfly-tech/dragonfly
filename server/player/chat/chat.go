@@ -15,12 +15,12 @@ var Global = New()
 // formatted messages to the chat.
 type Chat struct {
 	m           sync.Mutex
-	subscribers []Subscriber
+	subscribers map[Subscriber]struct{}
 }
 
-// New returns a new chat. A zero value is, however, usually sufficient for use.
+// New returns a new chat.
 func New() *Chat {
-	return &Chat{}
+	return &Chat{subscribers: map[Subscriber]struct{}{}}
 }
 
 // Write writes the byte slice p as a string to the chat. It is equivalent to calling
@@ -33,8 +33,7 @@ func (chat *Chat) Write(p []byte) (n int, err error) {
 func (chat *Chat) WriteString(s string) (n int, err error) {
 	chat.m.Lock()
 	defer chat.m.Unlock()
-
-	for _, subscriber := range chat.subscribers {
+	for subscriber := range chat.subscribers {
 		subscriber.Message(s)
 	}
 	return len(s), nil
@@ -45,7 +44,15 @@ func (chat *Chat) WriteString(s string) (n int, err error) {
 func (chat *Chat) Subscribe(s Subscriber) {
 	chat.m.Lock()
 	defer chat.m.Unlock()
-	chat.subscribers = append(chat.subscribers, s)
+	chat.subscribers[s] = struct{}{}
+}
+
+// Subscribed checks if a subscriber is currently subscribed to the chat.
+func (chat *Chat) Subscribed(s Subscriber) bool {
+	chat.m.Lock()
+	defer chat.m.Unlock()
+	_, ok := chat.subscribers[s]
+	return ok
 }
 
 // Unsubscribe removes a subscriber from the chat, so that messages written to the chat will no longer be
@@ -53,18 +60,7 @@ func (chat *Chat) Subscribe(s Subscriber) {
 func (chat *Chat) Unsubscribe(s Subscriber) {
 	chat.m.Lock()
 	defer chat.m.Unlock()
-
-	if len(chat.subscribers) == 0 {
-		chat.subscribers = nil
-		return
-	}
-	n := make([]Subscriber, 0, len(chat.subscribers)-1)
-	for _, subscriber := range chat.subscribers {
-		if subscriber != s {
-			n = append(n, subscriber)
-		}
-	}
-	chat.subscribers = n
+	delete(chat.subscribers, s)
 }
 
 // Close closes the chat, removing all subscribers from it.
