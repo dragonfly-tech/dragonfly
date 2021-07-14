@@ -60,6 +60,7 @@ const (
 	dataFlagUsingItem
 	dataFlagInvisible
 	dataFlagNoAI              = 16
+	dataFlagCanClimb          = 19
 	dataFlagBreathing         = 35
 	dataFlagAffectedByGravity = 48
 	dataFlagSwimming          = 56

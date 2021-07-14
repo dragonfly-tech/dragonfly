@@ -613,6 +613,8 @@ func (s *Session) ViewEntityState(e world.Entity, states []state.State) {
 			m.setFlag(dataKeyFlags, dataFlagNoAI)
 		case state.Swimming:
 			m.setFlag(dataKeyFlags, dataFlagSwimming)
+		case state.CanClimb:
+			m.setFlag(dataKeyFlags, dataFlagCanClimb)
 		case state.UsingItem:
 			m.setFlag(dataKeyFlags, dataFlagUsingItem)
 		case state.Scaled:

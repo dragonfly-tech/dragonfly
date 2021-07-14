@@ -65,6 +65,7 @@ const (
 	hashIronBlock
 	hashIronOre
 	hashKelp
+	hashLadder
 	hashLantern
 	hashLapisBlock
 	hashLapisOre
@@ -370,6 +371,10 @@ func (i IronOre) Hash() uint64 {
 
 func (k Kelp) Hash() uint64 {
 	return hashKelp | uint64(k.Age)<<7
+}
+
+func (l Ladder) Hash() uint64 {
+	return hashLadder | uint64(l.Facing)<<7
 }
 
 func (l Lantern) Hash() uint64 {

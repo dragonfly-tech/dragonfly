@@ -56,6 +56,9 @@ type Scaled struct {
 	Scale float64
 }
 
+// CanClimb allows an entity to climb ladders & vines.
+type CanClimb struct{}
+
 func (Sneaking) __()      {}
 func (Swimming) __()      {}
 func (Breathing) __()     {}
@@ -67,3 +70,4 @@ func (EffectBearing) __() {}
 func (UsingItem) __()     {}
 func (OnFire) __()        {}
 func (Scaled) __()        {}
+func (CanClimb) __()      {}
